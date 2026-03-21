@@ -18,11 +18,18 @@ class ProjectConfig:
     def __post_init__(self) -> None:
         self.language = self.language.lower()
         aliases = {
-            "nodejs": "node", "javascript": "node", "typescript": "node",
-            "js": "node", "ts": "node",
-            "csharp": "dotnet", "c#": "dotnet", "fsharp": "dotnet", "f#": "dotnet",
+            "nodejs": "node",
+            "javascript": "node",
+            "typescript": "node",
+            "js": "node",
+            "ts": "node",
+            "csharp": "dotnet",
+            "c#": "dotnet",
+            "fsharp": "dotnet",
+            "f#": "dotnet",
             "golang": "go",
-            "py": "python", "python3": "python",
+            "py": "python",
+            "python3": "python",
         }
         self.language = aliases.get(self.language, self.language)
 
@@ -158,8 +165,7 @@ class PipelineSpec:
             result["deploy"] = {
                 "target": self.deploy.target,
                 "environments": [
-                    {"name": e.name, "auto_deploy": e.auto_deploy}
-                    for e in self.deploy.environments
+                    {"name": e.name, "auto_deploy": e.auto_deploy} for e in self.deploy.environments
                 ],
             }
 

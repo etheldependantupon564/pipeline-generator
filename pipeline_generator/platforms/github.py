@@ -300,7 +300,9 @@ class GitHubActionsGenerator(BasePlatform):
             lines.append("    runs-on: ubuntu-latest")
 
             if not env.auto_deploy:
-                lines.append("    if: github.event_name == 'push' && github.ref == 'refs/heads/main'")
+                lines.append(
+                    "    if: github.event_name == 'push' && github.ref == 'refs/heads/main'"
+                )
 
             lines.append("    environment:")
             lines.append(f"      name: {env.name}")
@@ -312,7 +314,7 @@ class GitHubActionsGenerator(BasePlatform):
                 secret_name = f"KUBE_CONFIG_{env.name.upper()}"
                 lines.append(f"      - name: Deploy to {env.name.title()}")
                 lines.append("        run: |")
-                lines.append(f"          echo \"Deploying to {env.name}...\"")
+                lines.append(f'          echo "Deploying to {env.name}..."')
                 lines.append(
                     f"          # kubectl set image deployment/app "
                     f"app={self._gh('env.REGISTRY')}/{self._gh('env.IMAGE_NAME')}"

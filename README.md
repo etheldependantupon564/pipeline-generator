@@ -124,13 +124,15 @@ pipe-gen generate --demo
 | `pipe-gen init` | Create a pipeline.yaml spec file |
 | `pipe-gen detect` | Auto-detect project type |
 | `pipe-gen generate` | Generate CI/CD pipeline configs |
+| `pipe-gen validate` | Validate a spec file |
+| `pipe-gen list-presets` | List all available presets |
 | `pipe-gen --version` | Show version |
 
 ### `pipe-gen init`
 
 ```
 Options:
-  -p, --preset   Language preset (python, node, go, dotnet, terraform)
+  -p, --preset   Language preset (python, python-full, python-django, python-flask, node, node-ts, go, dotnet, terraform)
   -n, --name     Project name
   -o, --output   Output file path (default: pipeline.yaml)
 ```
@@ -146,6 +148,19 @@ Options:
   --dry-run        Preview without writing files
   --demo           Demo mode with sample output
 ```
+
+### `pipe-gen validate`
+
+```
+Options:
+  -s, --spec     Path to spec file (default: pipeline.yaml)
+```
+
+Validates the spec file for syntax errors and required fields.
+
+### `pipe-gen list-presets`
+
+Lists all available presets with details including language, stages, lint tools, and security tools.
 
 ## 🗣️ Supported Languages
 
@@ -230,7 +245,7 @@ pipeline-generator/
 │       └── console.py       # Rich terminal output
 ├── tests/
 │   ├── conftest.py          # Test fixtures
-│   └── test_generator.py    # 35+ tests
+│   └── test_generator.py    # 45+ tests
 ├── examples/                # Example spec files
 ├── pyproject.toml
 ├── README.md

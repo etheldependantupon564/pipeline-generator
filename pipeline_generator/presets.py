@@ -212,8 +212,45 @@ PRESETS: dict[str, PipelineSpec] = {
             ],
         ),
     ),
+    "python-django": PipelineSpec(
+        project=ProjectConfig(
+            name="my-django-app", language="python", version="3.11", framework="django"
+        ),
+        stages=["lint", "test", "security", "build", "deploy"],
+        lint=LintConfig(tools=["ruff", "mypy"]),
+        test=TestConfig(framework="pytest", coverage=True, min_coverage=80),
+        security=SecurityConfig(tools=["bandit", "safety"]),
+        build=BuildConfig(type="docker", registry="ghcr.io"),
+        deploy=DeployConfig(
+            target="kubernetes",
+            environments=[
+                Environment(name="staging", auto_deploy=True),
+                Environment(name="production", auto_deploy=False),
+            ],
+        ),
+    ),
+    "python-flask": PipelineSpec(
+        project=ProjectConfig(
+            name="my-flask-app", language="python", version="3.11", framework="flask"
+        ),
+        stages=["lint", "test", "security", "build"],
+        lint=LintConfig(tools=["ruff"]),
+        test=TestConfig(framework="pytest", coverage=True, min_coverage=80),
+        security=SecurityConfig(tools=["bandit", "safety"]),
+        build=BuildConfig(type="docker", registry="ghcr.io"),
+    ),
     "node": PipelineSpec(
         project=ProjectConfig(name="my-node-app", language="node", version="20"),
+        stages=["lint", "test", "security", "build"],
+        lint=LintConfig(tools=["eslint", "prettier"]),
+        test=TestConfig(framework="jest", coverage=True, min_coverage=80),
+        security=SecurityConfig(tools=["npm-audit"]),
+        build=BuildConfig(type="docker", registry="ghcr.io"),
+    ),
+    "node-ts": PipelineSpec(
+        project=ProjectConfig(
+            name="my-typescript-app", language="node", version="20", framework="typescript"
+        ),
         stages=["lint", "test", "security", "build"],
         lint=LintConfig(tools=["eslint", "prettier"]),
         test=TestConfig(framework="jest", coverage=True, min_coverage=80),

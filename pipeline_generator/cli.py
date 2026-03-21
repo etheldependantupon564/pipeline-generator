@@ -41,14 +41,16 @@ def cli() -> None:
 
 @cli.command()
 @click.option(
-    "--preset", "-p",
+    "--preset",
+    "-p",
     type=click.Choice(PRESET_CHOICES),
     default="python",
     help="Language preset to use.",
 )
 @click.option("--name", "-n", default="", help="Project name (overrides preset default).")
 @click.option(
-    "--output", "-o",
+    "--output",
+    "-o",
     default="pipeline.yaml",
     help="Output file path for the spec.",
 )
@@ -83,15 +85,60 @@ def detect(path: str) -> None:
     print_detection(result)
 
 
+@cli.command("list-presets")
+def list_presets() -> None:
+    """List all available presets with details.
+
+    \b
+    Shows preset name, language, stages, and tools.
+    """
+    from .output.console import print_presets_list
+
+    print_presets_list(PRESETS)
+
+
 @cli.command()
 @click.option(
-    "--platform", "-p",
+    "--spec",
+    "-s",
+    default="pipeline.yaml",
+    help="Path to the spec YAML file.",
+)
+def validate(spec: str) -> None:
+    """Validate a pipeline spec file.
+
+    \b
+    Checks the spec file for syntax errors and missing required fields.
+
+    \b
+    Examples:
+      pipe-gen validate                         # Validate pipeline.yaml
+      pipe-gen validate --spec my-pipeline.yaml
+    """
+    from .output.console import print_validation_result
+
+    try:
+        pipeline_spec = load_spec(spec)
+        print_validation_result(spec, pipeline_spec, valid=True)
+    except FileNotFoundError:
+        print_error(f"Spec file '{spec}' not found.")
+        raise SystemExit(1) from None
+    except Exception as e:
+        print_validation_result(spec, None, valid=False, error=str(e))
+        raise SystemExit(1) from None
+
+
+@cli.command()
+@click.option(
+    "--platform",
+    "-p",
     type=click.Choice(PLATFORM_CHOICES),
     default="all",
     help="Target platform(s).",
 )
 @click.option(
-    "--spec", "-s",
+    "--spec",
+    "-s",
     default="pipeline.yaml",
     help="Path to the spec YAML file.",
 )
@@ -102,7 +149,8 @@ def detect(path: str) -> None:
     help="Use a built-in preset instead of a spec file.",
 )
 @click.option(
-    "--output-dir", "-o",
+    "--output-dir",
+    "-o",
     default=".",
     help="Output directory for generated files.",
 )
@@ -166,11 +214,7 @@ def generate(
         )
 
         # Print each platform result
-        platform_list = (
-            list(PLATFORMS.values())
-            if platform == "all"
-            else [PLATFORMS[platform]]
-        )
+        platform_list = list(PLATFORMS.values()) if platform == "all" else [PLATFORMS[platform]]
 
         for gen in platform_list:
             if gen.filename in results:

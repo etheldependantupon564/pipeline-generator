@@ -20,7 +20,9 @@ from pipeline_generator.models import (
 def python_spec() -> PipelineSpec:
     """A full-featured Python pipeline spec."""
     return PipelineSpec(
-        project=ProjectConfig(name="my-python-api", language="python", version="3.11", framework="fastapi"),
+        project=ProjectConfig(
+            name="my-python-api", language="python", version="3.11", framework="fastapi"
+        ),
         stages=["lint", "test", "security", "build", "deploy"],
         lint=LintConfig(tools=["ruff"]),
         test=TestConfig(framework="pytest", coverage=True, min_coverage=80),

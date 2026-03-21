@@ -151,9 +151,7 @@ def _detect_python_details(pyproject_path: str, result: DetectionResult) -> None
         pass
 
 
-def _detect_node_details(
-    package_path: str, result: DetectionResult, entries: set[str]
-) -> None:
+def _detect_node_details(package_path: str, result: DetectionResult, entries: set[str]) -> None:
     """Extract Node.js project details from package.json."""
     try:
         pkg = json.load(open(package_path, encoding="utf-8"))

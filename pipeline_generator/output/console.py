@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import sys
 from typing import TYPE_CHECKING
 
 from rich.console import Console
@@ -13,11 +12,7 @@ if TYPE_CHECKING:
     from ..detector import DetectionResult
     from ..models import PipelineSpec
 
-# Force UTF-8 on Windows to prevent emoji encoding errors
-if sys.platform == "win32":
-    import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-
+# Create console with force_terminal=False to handle test environments gracefully
 console = Console()
 
 
@@ -127,9 +122,13 @@ def print_detection(result: "DetectionResult") -> None:
     if result.framework:
         lines.append(f"[bold]Framework:[/bold]    {result.framework}")
     lines.append(f"[bold]Pkg Manager:[/bold]  {result.package_manager}")
-    docker_status = "[green]\u2705 Found[/green]" if result.has_dockerfile else "[dim]\u2796 Not found[/dim]"
+    docker_status = (
+        "[green]\u2705 Found[/green]" if result.has_dockerfile else "[dim]\u2796 Not found[/dim]"
+    )
     lines.append(f"[bold]Dockerfile:[/bold]   {docker_status}")
-    test_status = "[green]\u2705 Found[/green]" if result.has_tests else "[dim]\u2796 Not found[/dim]"
+    test_status = (
+        "[green]\u2705 Found[/green]" if result.has_tests else "[dim]\u2796 Not found[/dim]"
+    )
     lines.append(f"[bold]Tests:[/bold]        {test_status}")
 
     if result.existing_ci:
@@ -140,9 +139,7 @@ def print_detection(result: "DetectionResult") -> None:
 
     lines.append("")
     lines.append("[dim]Suggested command:[/dim]")
-    lines.append(
-        f"  [cyan]pipe-gen init --preset {result.language} --name my-project[/cyan]"
-    )
+    lines.append(f"  [cyan]pipe-gen init --preset {result.language} --name my-project[/cyan]")
 
     console.print(
         Panel(
@@ -174,3 +171,80 @@ def print_init_success(output_path: str, preset: str) -> None:
 def print_error(message: str) -> None:
     """Print an error message."""
     console.print(f"\n[bold red]\u274c Error:[/bold red] {message}\n")
+
+
+def print_presets_list(presets: dict) -> None:
+    """Print a list of available presets with details."""
+    from rich.table import Table
+
+    console.print()
+    console.print(
+        Panel(
+            "[bold cyan]\U0001f4cb  AVAILABLE PRESETS[/bold cyan]\n\n"
+            "Use with: [cyan]pipe-gen init --preset <name>[/cyan]",
+            border_style="cyan",
+            padding=(1, 2),
+        )
+    )
+    console.print()
+
+    table = Table(show_header=True, header_style="bold", expand=True)
+    table.add_column("Preset", style="cyan", no_wrap=True)
+    table.add_column("Language", style="green")
+    table.add_column("Stages")
+    table.add_column("Lint Tools", style="dim")
+    table.add_column("Security", style="dim")
+
+    for name, spec in presets.items():
+        stages = " \u2192 ".join(spec.stages)
+        lint_tools = ", ".join(spec.lint.tools) if spec.lint else "-"
+        security_tools = ", ".join(spec.security.tools) if spec.security else "-"
+        table.add_row(
+            name,
+            f"{spec.project.language.title()} {spec.project.version}",
+            stages,
+            lint_tools,
+            security_tools,
+        )
+
+    console.print(table)
+    console.print()
+
+
+def print_validation_result(
+    spec_path: str,
+    spec: "PipelineSpec | None",
+    valid: bool,
+    error: str = "",
+) -> None:
+    """Print the result of spec file validation."""
+    if valid and spec:
+        stages = " \u2192 ".join(spec.stages)
+        framework = f" ({spec.project.framework})" if spec.project.framework else ""
+        content = (
+            f"[green]\u2705 Valid spec file![/green]\n\n"
+            f"[bold]Project:[/bold]  {spec.project.name}\n"
+            f"[bold]Language:[/bold] {spec.project.language.title()} {spec.project.version}{framework}\n"
+            f"[bold]Stages:[/bold]   {stages}\n\n"
+            "[dim]Ready to generate pipelines:[/dim]\n"
+            f"  [cyan]pipe-gen generate --spec {spec_path}[/cyan]"
+        )
+        console.print(
+            Panel(
+                content,
+                title="\U0001f9ea  Validation Result",
+                border_style="green",
+                padding=(1, 2),
+            )
+        )
+    else:
+        console.print(
+            Panel(
+                f"[red]\u274c Invalid spec file![/red]\n\n"
+                f"[bold]Error:[/bold] {error}\n\n"
+                "[dim]Check the file format and try again.[/dim]",
+                title="\U0001f9ea  Validation Result",
+                border_style="red",
+                padding=(1, 2),
+            )
+        )

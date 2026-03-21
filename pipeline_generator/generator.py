@@ -158,11 +158,13 @@ def render_spec_yaml(spec: PipelineSpec) -> str:
     else:
         lines.append("  # framework: fastapi       # Optional: fastapi | django | express | next")
 
-    lines.extend([
-        "",
-        "# Pipeline stages (in execution order)",
-        "stages:",
-    ])
+    lines.extend(
+        [
+            "",
+            "# Pipeline stages (in execution order)",
+            "stages:",
+        ]
+    )
     for stage in spec.stages:
         lines.append(f"  - {stage}")
     if "deploy" not in spec.stages:
@@ -174,14 +176,16 @@ def render_spec_yaml(spec: PipelineSpec) -> str:
             lines.append(f"    - {tool}")
 
     if spec.test:
-        lines.extend([
-            "",
-            "# Test configuration",
-            "test:",
-            f"  framework: {spec.test.framework}",
-            f"  coverage: {str(spec.test.coverage).lower()}",
-            f"  min_coverage: {spec.test.min_coverage}",
-        ])
+        lines.extend(
+            [
+                "",
+                "# Test configuration",
+                "test:",
+                f"  framework: {spec.test.framework}",
+                f"  coverage: {str(spec.test.coverage).lower()}",
+                f"  min_coverage: {spec.test.min_coverage}",
+            ]
+        )
 
     if spec.security:
         lines.extend(["", "# Security scanning", "security:", "  tools:"])
@@ -189,39 +193,45 @@ def render_spec_yaml(spec: PipelineSpec) -> str:
             lines.append(f"    - {tool}")
 
     if spec.build:
-        lines.extend([
-            "",
-            "# Build configuration",
-            "build:",
-            f"  type: {spec.build.type}",
-            f"  dockerfile: {spec.build.dockerfile}",
-            f"  registry: {spec.build.registry}",
-        ])
+        lines.extend(
+            [
+                "",
+                "# Build configuration",
+                "build:",
+                f"  type: {spec.build.type}",
+                f"  dockerfile: {spec.build.dockerfile}",
+                f"  registry: {spec.build.registry}",
+            ]
+        )
 
     if spec.deploy:
-        lines.extend([
-            "",
-            "# Deployment configuration",
-            "deploy:",
-            f"  target: {spec.deploy.target}",
-            "  environments:",
-        ])
+        lines.extend(
+            [
+                "",
+                "# Deployment configuration",
+                "deploy:",
+                f"  target: {spec.deploy.target}",
+                "  environments:",
+            ]
+        )
         for env in spec.deploy.environments:
             auto = str(env.auto_deploy).lower()
             lines.append(f"    - name: {env.name}")
             lines.append(f"      auto_deploy: {auto}")
     else:
-        lines.extend([
-            "",
-            "# Deployment (uncomment to enable)",
-            "# deploy:",
-            "#   target: kubernetes       # kubernetes | azure-webapp | aws-ecs | static",
-            "#   environments:",
-            "#     - name: staging",
-            "#       auto_deploy: true",
-            "#     - name: production",
-            "#       auto_deploy: false",
-        ])
+        lines.extend(
+            [
+                "",
+                "# Deployment (uncomment to enable)",
+                "# deploy:",
+                "#   target: kubernetes       # kubernetes | azure-webapp | aws-ecs | static",
+                "#   environments:",
+                "#     - name: staging",
+                "#       auto_deploy: true",
+                "#     - name: production",
+                "#       auto_deploy: false",
+            ]
+        )
 
     lines.append("")
     return "\n".join(lines)

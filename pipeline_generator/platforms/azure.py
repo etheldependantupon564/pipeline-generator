@@ -120,7 +120,11 @@ class AzureDevOpsGenerator(BasePlatform):
                     installs.append(cfg["install"])
 
             if installs:
-                cmd = " && ".join(installs) if len(installs) <= 2 else "\n              ".join(installs)
+                cmd = (
+                    " && ".join(installs)
+                    if len(installs) <= 2
+                    else "\n              ".join(installs)
+                )
                 lines.append(f"          - script: {cmd}")
                 lines.append('            displayName: "Install linters"')
 
@@ -184,30 +188,32 @@ class AzureDevOpsGenerator(BasePlatform):
         if test_cmd:
             # For Python, add JUnit output
             if spec.project.language == "python" and "pytest" in test_cmd:
-                test_cmd = test_cmd.replace(
-                    "pytest", "pytest --junitxml=test-results.xml"
-                )
+                test_cmd = test_cmd.replace("pytest", "pytest --junitxml=test-results.xml")
             lines.append(f"          - script: {test_cmd}")
             lines.append('            displayName: "Run tests"')
 
         # Publish test results for Python / .NET
         if spec.project.language == "python":
-            lines.extend([
-                "          - task: PublishTestResults@2",
-                "            inputs:",
-                '              testResultsFormat: "JUnit"',
-                '              testResultsFiles: "test-results.xml"',
-                '            displayName: "Publish test results"',
-                "            condition: succeededOrFailed()",
-            ])
+            lines.extend(
+                [
+                    "          - task: PublishTestResults@2",
+                    "            inputs:",
+                    '              testResultsFormat: "JUnit"',
+                    '              testResultsFiles: "test-results.xml"',
+                    '            displayName: "Publish test results"',
+                    "            condition: succeededOrFailed()",
+                ]
+            )
         if spec.test and spec.test.coverage and spec.project.language in ("python",):
-            lines.extend([
-                "          - task: PublishCodeCoverageResults@2",
-                "            inputs:",
-                '              codeCoverageTool: "Cobertura"',
-                '              summaryFileLocation: "coverage.xml"',
-                '            displayName: "Publish coverage"',
-            ])
+            lines.extend(
+                [
+                    "          - task: PublishCodeCoverageResults@2",
+                    "            inputs:",
+                    '              codeCoverageTool: "Cobertura"',
+                    '              summaryFileLocation: "coverage.xml"',
+                    '            displayName: "Publish coverage"',
+                ]
+            )
 
         lines.append("")
         return "\n".join(lines)
@@ -259,27 +265,29 @@ class AzureDevOpsGenerator(BasePlatform):
             '    displayName: "Build & Push"',
             "    dependsOn:",
         ]
-        for d in (deps or ["Test"]):
+        for d in deps or ["Test"]:
             lines.append(f"      - {d}")
 
-        lines.extend([
-            "    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))",
-            "    jobs:",
-            "      - job: Build",
-            "        pool:",
-            '          vmImage: "ubuntu-latest"',
-            "        steps:",
-            "          - task: Docker@2",
-            '            displayName: "Build and push"',
-            "            inputs:",
-            "              command: buildAndPush",
-            "              repository: $(imageName)",
-            f"              dockerfile: {spec.build.dockerfile if spec.build else 'Dockerfile'}",
-            "              containerRegistry: $(registryConnection)",
-            "              tags: |",
-            "                $(Build.BuildId)",
-            "                latest",
-        ])
+        lines.extend(
+            [
+                "    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))",
+                "    jobs:",
+                "      - job: Build",
+                "        pool:",
+                '          vmImage: "ubuntu-latest"',
+                "        steps:",
+                "          - task: Docker@2",
+                '            displayName: "Build and push"',
+                "            inputs:",
+                "              command: buildAndPush",
+                "              repository: $(imageName)",
+                f"              dockerfile: {spec.build.dockerfile if spec.build else 'Dockerfile'}",
+                "              containerRegistry: $(registryConnection)",
+                "              tags: |",
+                "                $(Build.BuildId)",
+                "                latest",
+            ]
+        )
 
         lines.append("")
         return "\n".join(lines)

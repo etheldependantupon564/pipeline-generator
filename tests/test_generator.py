@@ -290,9 +290,7 @@ class TestGeneratorEngine:
 
     def test_write_files_to_disk(self, python_spec):
         with tempfile.TemporaryDirectory() as tmpdir:
-            generate_pipelines(
-                python_spec, platform="github", output_dir=tmpdir, dry_run=False
-            )
+            generate_pipelines(python_spec, platform="github", output_dir=tmpdir, dry_run=False)
             filepath = os.path.join(tmpdir, ".github", "workflows", "ci.yml")
             assert os.path.exists(filepath)
             content = open(filepath, encoding="utf-8").read()
@@ -307,6 +305,7 @@ class TestPresets:
         gen = GitHubActionsGenerator()
         for name, spec in PRESETS.items():
             import copy
+
             s = copy.deepcopy(spec)
             output = gen.generate(fill_defaults(s))
             assert "name:" in output, f"Preset '{name}' produced empty output"
@@ -320,6 +319,69 @@ class TestPresets:
         # Each major language should have a preset
         for lang in ("python", "node", "go", "dotnet", "terraform"):
             assert lang in PRESETS, f"Missing preset for {lang}"
+
+    def test_framework_presets_exist(self):
+        """Test that framework-specific presets are available."""
+        framework_presets = ["python-django", "python-flask", "python-full", "node-ts"]
+        for preset in framework_presets:
+            assert preset in PRESETS, f"Missing preset: {preset}"
+
+    def test_preset_count(self):
+        """Verify we have the expected number of presets."""
+        # 9 presets: python, python-full, python-django, python-flask, node, node-ts, go, dotnet, terraform
+        assert len(PRESETS) == 9
+
+
+# =============================================================================
+# CLI Tests
+# =============================================================================
+class TestCLI:
+    def test_cli_version(self):
+        from click.testing import CliRunner
+        from pipeline_generator.cli import cli
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ["--version"])
+        assert result.exit_code == 0
+        assert "1.0.0" in result.output
+
+    def test_cli_help(self):
+        from click.testing import CliRunner
+        from pipeline_generator.cli import cli
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ["--help"])
+        assert result.exit_code == 0
+        assert "generate" in result.output
+        assert "init" in result.output
+        assert "detect" in result.output
+        assert "validate" in result.output
+        assert "list-presets" in result.output
+
+    def test_cli_list_presets(self):
+        from click.testing import CliRunner
+        from pipeline_generator.cli import cli
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ["list-presets"])
+        assert result.exit_code == 0
+        assert "python" in result.output.lower()
+
+    def test_cli_validate_nonexistent(self):
+        from click.testing import CliRunner
+        from pipeline_generator.cli import cli
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ["validate", "--spec", "nonexistent.yaml"])
+        assert result.exit_code == 1
+
+    def test_cli_generate_demo(self):
+        from click.testing import CliRunner
+        from pipeline_generator.cli import cli
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ["generate", "--demo"])
+        assert result.exit_code == 0
 
 
 # =============================================================================
@@ -351,9 +413,7 @@ class TestDetector:
 
     def test_detect_go_project(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            open(os.path.join(tmpdir, "go.mod"), "w").write(
-                "module test\n\ngo 1.22\n"
-            )
+            open(os.path.join(tmpdir, "go.mod"), "w").write("module test\n\ngo 1.22\n")
             result = detect_project(tmpdir)
             assert result.language == "go"
             assert result.version == "1.22"

@@ -46,9 +46,7 @@ class GitLabCIGenerator(BasePlatform):
 
     def _header(self, spec: PipelineSpec, tools: dict) -> str:
         ver_var = tools.get("version_var", "LANG_VERSION")
-        image = tools.get("image_template", "ubuntu:latest").format(
-            version="${" + ver_var + "}"
-        )
+        image = tools.get("image_template", "ubuntu:latest").format(version="${" + ver_var + "}")
 
         stages = [s for s in spec.stages if s != "deploy"] + (
             ["deploy"] if "deploy" in spec.stages else []
@@ -66,41 +64,49 @@ class GitLabCIGenerator(BasePlatform):
         for s in stages:
             lines.append(f"  - {s}")
 
-        lines.extend([
-            "",
-            "variables:",
-            f'  {ver_var}: "{spec.project.version}"',
-        ])
+        lines.extend(
+            [
+                "",
+                "variables:",
+                f'  {ver_var}: "{spec.project.version}"',
+            ]
+        )
 
         # Add cache config for Python/Node
         cache_key = tools.get("cache_key", "")
         if cache_key == "pip":
-            lines.extend([
-                '  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"',
-                "",
-                "default:",
-                f"  image: {image}",
-                "",
-                "cache:",
-                "  paths:",
-                "    - .cache/pip",
-            ])
+            lines.extend(
+                [
+                    '  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"',
+                    "",
+                    "default:",
+                    f"  image: {image}",
+                    "",
+                    "cache:",
+                    "  paths:",
+                    "    - .cache/pip",
+                ]
+            )
         elif cache_key == "npm":
-            lines.extend([
-                "",
-                "default:",
-                f"  image: {image}",
-                "",
-                "cache:",
-                "  paths:",
-                "    - node_modules/",
-            ])
+            lines.extend(
+                [
+                    "",
+                    "default:",
+                    f"  image: {image}",
+                    "",
+                    "cache:",
+                    "  paths:",
+                    "    - node_modules/",
+                ]
+            )
         else:
-            lines.extend([
-                "",
-                "default:",
-                f"  image: {image}",
-            ])
+            lines.extend(
+                [
+                    "",
+                    "default:",
+                    f"  image: {image}",
+                ]
+            )
 
         lines.append("")
         return "\n".join(lines)
@@ -157,14 +163,14 @@ class GitLabCIGenerator(BasePlatform):
             lines.append("    matrix:")
             ver_list = ", ".join(f'"{v}"' for v in versions)
             lines.append(f"      - {ver_var}: [{ver_list}]")
-            lines.append(
-                f"  image: {image_tpl.format(version='${' + ver_var + '}')}"
-            )
+            lines.append(f"  image: {image_tpl.format(version='${' + ver_var + '}')}")
 
-        lines.extend([
-            "  script:",
-            f"    - {tools.get('install_deps', 'echo no-op')}",
-        ])
+        lines.extend(
+            [
+                "  script:",
+                f"    - {tools.get('install_deps', 'echo no-op')}",
+            ]
+        )
 
         if test_cmd:
             # Add JUnit output for pytest
@@ -174,28 +180,30 @@ class GitLabCIGenerator(BasePlatform):
 
         # Coverage regex for GitLab
         if spec.test and spec.test.coverage and spec.project.language == "python":
-            lines.append(
-                r"  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'"
-            )
+            lines.append(r"  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'")
 
         # Artifacts
         if spec.project.language == "python" and spec.test and spec.test.coverage:
-            lines.extend([
-                "  artifacts:",
-                "    when: always",
-                "    reports:",
-                "      junit: report.xml",
-                "      coverage_report:",
-                "        coverage_format: cobertura",
-                "        path: coverage.xml",
-            ])
+            lines.extend(
+                [
+                    "  artifacts:",
+                    "    when: always",
+                    "    reports:",
+                    "      junit: report.xml",
+                    "      coverage_report:",
+                    "        coverage_format: cobertura",
+                    "        path: coverage.xml",
+                ]
+            )
         elif spec.project.language == "dotnet":
-            lines.extend([
-                "  artifacts:",
-                "    when: always",
-                "    reports:",
-                "      junit: TestResults/*.trx",
-            ])
+            lines.extend(
+                [
+                    "  artifacts:",
+                    "    when: always",
+                    "    reports:",
+                    "      junit: TestResults/*.trx",
+                ]
+            )
 
         lines.append("")
         return "\n".join(lines)
