@@ -1,6 +1,7 @@
-# 🚀 pipeline-generator
+﻿# 🚀 pipeline-generator
 
 [![PyPI](https://img.shields.io/pypi/v/cicd-pipeline-generator.svg)](https://pypi.org/project/cicd-pipeline-generator/)
+[![Python](https://img.shields.io/pypi/pyversions/cicd-pipeline-generator)](https://pypi.org/project/cicd-pipeline-generator/)
 [![CI](https://github.com/SanjaySundarMurthy/pipeline-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/SanjaySundarMurthy/pipeline-generator/actions)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -40,7 +41,7 @@ Or install from source:
 ```bash
 git clone https://github.com/SanjaySundarMurthy/pipeline-generator.git
 cd pipeline-generator
-pip install -e ".[dev]"
+pip install cicd-pipeline-generator
 ```
 
 ## 🚀 Quick Start
@@ -200,7 +201,7 @@ pipe-gen generate         # Generate configs
 
 ```bash
 # Install dev dependencies
-pip install -e ".[dev]"
+pip install cicd-pipeline-generator
 
 # Run tests
 pytest -v
@@ -264,3 +265,32 @@ MIT License — see [LICENSE](LICENSE) for details.
 - GitHub: [@SanjaySundarMurthy](https://github.com/SanjaySundarMurthy)
 - LinkedIn: [sanjaysundarmurthy](https://linkedin.com/in/sanjaysundarmurthy)
 - Portfolio: [sanjaysundarmurthy-portfolio.vercel.app](https://sanjaysundarmurthy-portfolio.vercel.app)
+
+
+## 🐳 Docker
+
+Run without installing Python:
+
+```bash
+# Build the image
+docker build -t pipeline-generator .
+
+# Run
+docker run --rm pipeline-generator --help
+
+# Example with volume mount
+docker run --rm -v ${PWD}:/workspace pipeline-generator [command] /workspace
+```
+
+Or pull from the container registry:
+
+```bash
+docker pull ghcr.io/SanjaySundarMurthy/pipeline-generator:latest
+docker run --rm ghcr.io/SanjaySundarMurthy/pipeline-generator:latest --help
+```
+
+## 🔗 Links
+
+- **PyPI**: [https://pypi.org/project/cicd-pipeline-generator/](https://pypi.org/project/cicd-pipeline-generator/)
+- **GitHub**: [https://github.com/SanjaySundarMurthy/pipeline-generator](https://github.com/SanjaySundarMurthy/pipeline-generator)
+- **Issues**: [https://github.com/SanjaySundarMurthy/pipeline-generator/issues](https://github.com/SanjaySundarMurthy/pipeline-generator/issues)
